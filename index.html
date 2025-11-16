@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Clone AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 1.1em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        select {
+            padding: 10px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:hover {
+            border-color: #667eea;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-autopilot {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: #333;
+        }
+
+        .game-area {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        canvas {
+            border: 4px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status {
+            text-align: center;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info-section p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .info-section ul {
+            margin-left: 20px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .github-link {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .github-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .github-link a:hover {
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JS Script port of Python Game</h1>
+        <p class="subtitle">Run the PythonGame Directory to review all features. This is a web runnable version ported by Claude</p>
+        <div class="controls">
+            <div class="control-group">
+                <label for="levelSelect">Level:</label>
+                <select id="levelSelect"></select>
+            </div>
+
+            <button class="btn-start" onclick="startManual()">
+                🎮 Start (Manual)
+            </button>
+
+            <button class="btn-autopilot" onclick="startAutopilot()">
+                🤖 Start (Autopilot)
+            </button>
+
+            <button class="btn-stop" onclick="stopGame()">
+                ⏹️ Stop
+            </button>
+        </div>
+
+        <div class="game-area">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <div class="status" id="status">
+            Select a level and click Start to begin
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">Pilot Y Position</div>
+                <div class="stat-value" id="pilotY">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pilot Velocity</div>
+                <div class="stat-value" id="pilotVelocity">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Floor Y</div>
+                <div class="stat-value" id="floorY">600</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Score</div>
+                <div class="stat-value" id="currentScore">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Pipes</div>
+                <div class="stat-value" id="totalPipes">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Next Pipe X</div>
+                <div class="stat-value" id="nextPipeX">N/A</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Next Pipe Gap</div>
+                <div class="stat-value" id="nextPipeGap">N/A</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Frames</div>
+                <div class="stat-value" id="frameCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">FPS</div>
+                <div class="stat-value" id="fps">0</div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>🎯 How It Works</h3>
+            <p>This is a complete browser-based Flappy Bird game with an AI controller that uses a hybrid navigation strategy:</p>
+            <ul>
+                <li><strong>Top Half Gaps:</strong> Apex targeting - maintains altitude so jump apex threads through 3/4 of gap height</li>
+                <li><strong>Bottom Half Gaps:</strong> Bottom pipe bouncing - treats bottom pipe like floor, bouncing along edge</li>
+                <li><strong>Priority System:</strong> Floor safety → Emergency collision → Strategy selection</li>
+                <li><strong>Predictive Physics:</strong> 5-frame lookahead for emergency collision avoidance</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h3>🎮 Controls</h3>
+            <ul>
+                <li><strong>Manual Mode:</strong> Press SPACEBAR to jump</li>
+                <li><strong>Autopilot Mode:</strong> AI controls the bird automatically</li>
+                <li><strong>Levels:</strong> From 1 pipe (Simple) to 200 pipes (Marathon)</li>
+            </ul>
+        </div>
+
+        <div class="github-link">
+            <p>Built with TypeScript • View source on <a href="https://github.com/yourusername/flappy-bird-ai" target="_blank">GitHub</a></p>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
