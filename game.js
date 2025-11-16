@@ -298,6 +298,9 @@ class GameEngine {
     }
 
     startManual() {
+        // stop any existing loop first
+        this.stop();
+
         this.reset();
         this.isAutopilot = false;
         this.isRunning = true;
@@ -307,6 +310,9 @@ class GameEngine {
     }
 
     startAutopilot() {
+        // stop any existing loop first
+        this.stop();
+
         this.reset();
         this.isAutopilot = true;
         this.isRunning = true;
